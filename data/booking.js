@@ -105,3 +105,19 @@ export const update = async(
     }
     return UpdateBookingData;
 }
+
+export const getBookingbyEmail = async(emailId) => {
+    let GetBookingId = await bookings();
+    let GetBookingDetailsById = await GetBookingId.findOne({emailId: emailId});
+    if (GetBookingDetailsById === null) return "-1";
+    GetBookingDetailsById._id == GetBookingDetailsById._id.toString();
+    return GetBookingDetailsById;
+};
+
+export const putCheckIn = async (BookingId) => {
+    let b = await bookings();
+    let c = await b.findOne({ BookingId: BookingId });
+    if (c === null) return "-1";
+    await b.updateOne({ BookingId: BookingId }, { $set: { CheckedIn: true } });
+    return "Updated successfully";
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <title>Check In Page</title>
+</head>
+<body>
+    <p>Search Booking By Email:</p>
+    <p>Enter First Name:</p>
+    <input type="text" name ="FirstName" id ="FirstName">
+    <p>Enter Email:</p>
+    <input type="text" name="email_search" id="email_search">
+    <button id="SearchByEmail" onclick="searche()">Search</button>
+    <p>OR</p>
+    <p>Search Booking by Bookin Id:</p>
+    <input type="text" name ="Booking_Id_search" id ="Booking_Id_search">
+    <button id="SearchByBookId" onclick="searchb()">Search</button>
+    <div class="results" id="rdiv"></div>
+    <script>
+        function searche(){
+            let d = document.getElementById("email_search")
+            let rdiv = document.getElementById('rdiv')
+            let u = "http://localhost:3000/admin/checkin/getbookingbyemail/" + d.value
+            $.ajax({
+                url: u,
+                type: "GET",
+                data: "json",
+                success: function (res) {
+                    if (res.length === 0){
+                        rdiv.textContent = `No Booking with that email ${d.value}`
+                    }
+                    const booking = document.createElement("div");
+                    booking.innerHTML =
+                        `
+                        <p><label for="FirstName">First Name: </label>${res.firstName}</p>
+                        <p><label for="LastName">Last Name: </label>${res.lastName}</p>
+                        <p><label for="EmailId">Email Id: </label>${res.emailId}</p>
+                        <p><label for="Phonenumber">Phone Number: </label>${res.contactNumber}</p>
+                        <p><label for="Checkindate">Checkin Date: </label>${res.CheckinDate}</p>
+                        <p><label for="CheckoutDate">Checkout Date: </label>${res.CheckOutDate}</p>
+                        <p><label for="Booking Status">Booking Status: </label>${res.BookingStatus}</p>
+                        ${res.BookingStatus ? '<button onclick="checkIn(\'' + res.bookingId + '\')">Check-In</button>' : ''}
+                        `
+                    rdiv.appendChild(booking)
+                }
+        })
+        }
+        function searchb(){
+            let d = document.getElementById("Booking_Id_search")
+            let rdiv = document.getElementById('rdiv')
+            let u = "http://localhost:3000/admin/checkin/getBooking/" + d.value
+            $.ajax({
+                url: u,
+                type: "GET",
+                data: "json",
+                success: function (res) {
+                    if (res.length === 0){
+                        rdiv.textContent = `No Booking with that Booking Id ${d.value}`
+                    }
+                    const booking = document.createElement("div");
+                    booking.innerHTML =
+                        `
+                        <p><label for="FirstName">First Name: </label>${res.firstName}</p>
+                        <p><label for="LastName">Last Name: </label>${res.lastName}</p>
+                        <p><label for="EmailId">Email Id: </label>${res.emailId}</p>
+                        <p><label for="Phonenumber">Phone Number: </label>${res.contactNumber}</p>
+                        <p><label for="Checkindate">Checkin Date: </label>${res.CheckinDate}</p>
+                        <p><label for="CheckoutDate">Checkout Date: </label>${res.CheckOutDate}</p>
+                        <p><label for="Booking Status">Booking Status: </label>${res.BookingStatus}</p>
+                        ${res.BookingStatus ? '<button onclick="checkIn(\'' + res.BookingId + '\')">Check-In</button>' : ''}
+                        `
+                    rdiv.appendChild(booking);
+                }
+        });
+        }
+        function checkIn(BookingId) {
+        let u = "http://localhost:3000/admin/checkIn/putcheckIn/" + BookingId;
+        let rdiv = document.getElementById('rdiv')
+        $.ajax({
+            url: u,
+            type: "POST",
+            dataType: "json",
+            success: function (updatedRes) {
+                console.log("Check-In successful");
+                console.log(updatedRes);
+            },
+        });
+        }
+
+        
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <title>Check out Page</title>
+</head>
+<body>
+    <p>Search Booking By Email:</p>
+    <input type="text" name ="FirstName" id ="FirstName">
+    <input type="text" name="email_search" id="email_search">
+    <p>OR</p>
+    <p>Search Booking by Booking Id</p>
+    <input type="text" name ="BookingId", id ="BookingID">
+    <button id="SearchByEmail" onclick="search()">Search</button>
+    <div class="results" id="rdiv"></div>
+    <script>
+        function search(){
+            let d = document.getElementById("email_search")
+            let rdiv = document.getElementById('rdiv')
+            let u = "http://localhost:3000/admin/checkout/getbookingbyemail/" + d.value
+            $.ajax({
+                url: u,
+                type: "GET",
+                data: "json",
+                success: function (res) {
+                    if (res.length === 0){
+                        rdiv.textContent = `No Booking with that email ${d.value}`
+                    }
+                    const booking = document.createElement("div");
+                    booking.innerHTML =
+                        `
+                        <p>${res.firstName}</p>
+                        <p>${res.lastName}</p>
+                        <p>${res.emailId}</p>
+                        <p>${res.contactNumber}</p>
+                        <p>${res.CheckinDate}</p>
+                        <p>${res.CheckOutDate}</p>
+                        <p>${res.BookingStatus}</p>
+                        `
+                    rdiv.appendChild(booking)
+                }
+        })
+        }
+    </script>
+</body>
+</html>
