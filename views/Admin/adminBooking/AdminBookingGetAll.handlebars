@@ -1,0 +1,18 @@
+<main>
+    {{!-- Search Guest Booking Part --}}
+    <div id="BookingGetDiv">
+        <form action="/admin/booking/AdminBookingGetAll" method="GET" id="BookingGetData">
+        <h2>Provide Guest Details:</h2>
+        <label for="DisplayFirstName">Enter First Name:</label>
+        <input type="text" name="DisplayFirstName" id="DisplayFirstName">
+        <label for="DisplayEmailId">Enter Email Address:</label>
+        <input type="email" name="DisplayEmailId" id="DisplayEmailId">
+        <br>
+        <button type="submit">Show Booking</button>
+        </form>
+    </div>
+    {{!-- Search Guest Booking Part End --}}
+</main>
+<footer>
+  <a href="/admin">back to admin Dashboard</a>
+</footer>

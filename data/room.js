@@ -156,7 +156,6 @@ export const runApp = async () => {
         // const allRooms = await getAllRooms()
         // const room2 = await deleteRoom(101)
         //
-        // console.log(`Room number with ${room2} is deleted`)
 
         const newRoom = await updateRoom(
             102,

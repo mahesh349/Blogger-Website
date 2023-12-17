@@ -425,10 +425,10 @@ export const checkId = async (id, varName) => {
 
 export const BookFirstName = async (firstName) => {
   if (!firstName) throw `Error: you must provide a first name`;
-  if (typeof firstName !== "string")
-    throw `Error: Provided first name is not a string`;
-  if (firstName.trim() === "")
-    throw `Error: Provided first name is empty try again`;
+  if(typeof firstName !== "string"){
+    throw `Enter Valid String Input`;
+  }
+  if (firstName.trim() === "") throw `Error: Provided first name is empty try again`;
   firstName.trim();
   firstName.toLowerCase();
   if (firstName.length < 2)
@@ -520,7 +520,7 @@ export const BookLastName = async (lastName) => {
 
 export const BookEmailId = async (emailId) => {
   if (typeof emailId !== "string")
-    throw `Error: Provided first name is not a string`;
+    throw `Error: Provided email is not a string`;
   if (emailId.trim() === "")
     throw `Error: Provided first name is empty try again`;
   emailId.trim();
@@ -532,8 +532,8 @@ export const BookEmailId = async (emailId) => {
 };
 
 export const BookContactNumber = async (contactNumber) => {
-  if (typeof emacontactNumberilId !== "string")
-    throw `Error: Provided first name is not a string`;
+  if (typeof contactNumber !== "string")
+    throw `Error: Provided contact is not a string`;
   if (contactNumber.trim() === "")
     throw `Error: Provided first name is empty try again`;
   contactNumber.trim();

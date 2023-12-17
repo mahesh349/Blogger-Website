@@ -1,4 +1,36 @@
-<footer>
+<main>
+  {{!-- Booking Creating Admin Side --}}
+  <div id="BookingFormDiv" >
+    <p>Please enter your details to confirm your booking:</p>
+    <form action="/admin/booking/adminBooking" method="POST" id="BookingForm">
+      <h2>Guest Details</h2>
+      <label for="FirstNameInput">Enter First Name</label>
+      <input type="text" placeholder="Enter First Name" id="FirstNameInput" name="FirstNameInput">
+      <br>
+      <label for="LastNameInput">Enter Last Name</label>
+      <input type="text" placeholder="Enter Last Name" id="LastNameInput" name="LastNameInput">
+      <br>
+      <label for="EmailIdInput">Enter Email Address</label>
+      <input type="email" placeholder="Enter Last Name" id="EmailIdInput" name="EmailIdInput">
+      <br>
+      <label for="ContactNumberInput">Enter Contact Number:</label>
+      <input type="text" placeholder="Enter Contact Number" name="ContactNumberInput" id="ContactNumberInput">
+      <br>
+      <label for="CheckinDateInput">Enter CheckIn Date</label>
+      <input type="date" placeholder="Enter Last Name" id="CheckinDateInput" name="CheckinDateInput">
+      <br>
+      <label for="CheckoutDateInput">Enter CheckOut Date</label>
+      <input type="date" placeholder="Enter Last Name" id="CheckoutDateInput" name="CheckoutDateInput">
+      <br>
+      <button type="submit">Create Booking</button>
+    </form>
+  </div>
 
+
+
+
+
+</main>
+<footer>
   <a href="/admin">back to admin Dashboard</a>
 </footer>

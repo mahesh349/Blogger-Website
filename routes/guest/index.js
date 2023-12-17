@@ -8,20 +8,19 @@ import roomRoutes from "./room.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-    if(!req.session.user){
-        return res.redirect('/login');
-    }
+  if(!req.session.user){
+      return res.redirect('/login');
+  }
   try {
-    res.render("../views/guest/Homepage", {
-      title: "Welcome to Guest Page",
-      userId:req.session.user.id
-      //userId:req.session.user.id
-    });
+    res.render("../views/guest/Homepage", {title: "Welcome to Guest Page",userId:req.session.user.id});
   } catch (e) {
     console.error(e);
     res.status(500).send("Internal Server Error");
   }
 });
+
+
+
 router.use("/account", accountRoutes);
 router.use("/booking", bookingRoutes);
 router.use("/feedback", feedbackRoutes);

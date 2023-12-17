@@ -40,7 +40,6 @@ async function deleteFlaggedFeedback() {
   const checkboxes = document.querySelectorAll(".deleteFeedbackIds:checked");
   const feedbackIds = Array.from(checkboxes).map((checkbox) => checkbox.value);
 
-  console.log("In delete flagged function");
   const response = await fetch("/admin/feedback", {
     method: "DELETE",
     headers: {

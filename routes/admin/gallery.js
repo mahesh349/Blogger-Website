@@ -1,19 +1,5 @@
 // admin here can add, delete, and see all the photos he want to keep in the gallery page:
 // GET all, POST, DELETE
-
-// import { Router } from "express";
-// const router = Router();
-
-// router.get("/", async (req, res) => {
-//   try {
-//     res.render("./Admin/adminGallery/adminGallery", {
-//       title: "admin gallery manipulation",
-//     });
-//   } catch (e) {}
-// });
-
-// export default router;
-
 // routes/gallery.js
 import express from 'express';
 import multer from 'multer';
@@ -22,17 +8,19 @@ import { uploadImageToFirebase, deleteImageFromFirebase, saveImageDetailsToMongo
 const router = express.Router();
 const upload = multer();
 
+router.get("/", async (req, res) => {
+  try {
+    res.render("./Admin/adminGallery/adminGallery", {
+      title: "admin gallery manipulation",
+    });
+  } catch (e) {}
+});
+
 router.post('/upload', upload.single('image'), async (req, res) => {
   try {
     const downloadURL = await uploadImageToFirebase(req.file);
     const imageData = {
         filename: req.file.originalname,
-        /* 
-        you can keep the same code but just add these comment code in it to accept other details and add it in the database*/
-        roomNumber: req.body.roomNumber,
-        roomName: req.body.roomName,
-        roomPrice: req.body.roomPrice,
-        
         url: downloadURL
     }
     const mongoId = await saveImageDetailsToMongoDB(imageData);

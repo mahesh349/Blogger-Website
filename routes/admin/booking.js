@@ -5,35 +5,73 @@ import { Router } from "express";
 import * as BookingFunctions from '../../data/booking.js';
 const router = Router();
 
-// router.get("/", async (req, res) => {
-//   try {
-//     res.render("./Admin/adminBooking/adminBooking", {
-//       title: "admin booking manipulation",
-//     });
-//   } catch (e) {}
-// });
-
-router.route('/').get(async (req,res) => {
-  return res.json({error: 'Your should not be here.'});
+router.get("/", async (req, res) => {
+  try {
+    res.render("./Admin/adminBooking/BookingOptions", {
+      title: "admin booking manipulation",
+    });
+  } catch (e) {}
 });
 
+// router.route('/booking').get(async (req,res) => {
+//   console.log("in the /booking route");
+//   return res.render("./admin/adminBooking/adminBooking");
+// });
+
 router
-  .route('/book')
+  .route('/adminBooking')
   .get(async(req,res) => {
-    return res.render("./Admin/adminBooking/adminBooking",{title:'Room Booking',error:''});
-  })
-  .post(async(req,res) => {
     try{
-      let BookingForm = req.body;
-      const AddBookingData = await BookingFunctions.CreateBooking(BookingId,lastName,emailId,contactNumber,BookingDate,CheckinDate,CheckOutDate,BookingStatus);
-      if(AddBookingData.insertedUser == true){
-        return res.redirect('/');
-      }else{
-        throw `something went wrong`;
-      }
+      return res.render("./Admin/adminBooking/adminBooking");
     }catch(e){
       return res.status(404).render('error',{title:'Error',error: e});
     }
   });
+
+// router
+//   .route('/adminBooking')
+//   .post(async (req, res) => {
+//     try {
+//       const AddBookingData = req.body;
+//       const newBooking = await BookingFunctions.CreateBooking(
+//         AddBookingData.FirstNameInput,
+//         AddBookingData.LastNameInput,
+//         AddBookingData.EmailIdInput,
+//         AddBookingData.ContactNumberInput,
+//         AddBookingData.CheckinDateInput,
+//         AddBookingData.CheckoutDateInput
+//       );
+//       res.render("./Admin/adminBooking/BookingOptions", {title: "Payment Page"});
+//     } catch (e) {
+//       console.error(e); // Log the error
+//       res.status(500).send('Error occurred: ' + e.message); // Send detailed error message
+//     }
+//   });
+
+router
+  .route("/AdminBookingGetAll")
+  .get(async(req,res) => {
+    try{
+      return res.render("./Admin/adminBooking/AdminBookingGetAll");
+    }catch(e){
+      return res.status(404).render('error',{title:'Error',error: e});
+    }
+  });
+
+// router
+//   .route("/AdminBookingGetAll")
+//   .get(async(req,res) => {
+//     try {
+//       const AddBookingData = req.body;
+//       const newBooking = await BookingFunctions.GetBooking(
+//         AddBookingData.FirstNameInput,
+//         AddBookingData.EmailIdInput
+//       );
+//       res.render("./Admin/adminBooking/BookingOptions");
+//     } catch (e) {
+//       console.error(e); // Log the error
+//       res.status(500).send('Error occurred: ' + e.message); // Send detailed error message
+//     }
+//   });
 
 export default router;
