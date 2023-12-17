@@ -106,46 +106,46 @@ export const update = async(
     return UpdateBookingData;
 }
 
-export const getBookingbyEmail = async(emailId) => {
-    let GetBookingId = await bookings();
-    let GetBookingDetailsById = await GetBookingId.findOne({emailId: emailId});
-    if (GetBookingDetailsById === null) return "-1";
-    GetBookingDetailsById._id == GetBookingDetailsById._id.toString();
-    return GetBookingDetailsById;
-};
+// export const getBookingbyEmail = async(emailId) => {
+//     let GetBookingId = await bookings();
+//     let GetBookingDetailsById = await GetBookingId.findOne({emailId: emailId});
+//     if (GetBookingDetailsById === null) return "-1";
+//     GetBookingDetailsById._id == GetBookingDetailsById._id.toString();
+//     return GetBookingDetailsById;
+// };
 
-export const putCheckInb = async (BookingId) => {
-    let b = await bookings();
-    let c = await b.findOne({ BookingId: BookingId });
-    if (c === null) return "-1";
-    await b.updateOne({ BookingId: BookingId }, { $set: { CheckedIn: true } });
-    return "Updated successfully";
-}
+// export const putCheckInb = async (BookingId) => {
+//     let b = await bookings();
+//     let c = await b.findOne({ BookingId: BookingId });
+//     if (c === null) return "-1";
+//     await b.updateOne({ BookingId: BookingId }, { $set: { CheckedIn: true } });
+//     return "Updated successfully";
+// }
 
-export const putCheckIne = async (emailId) => {
-    let b = await bookings();
-    let c = await b.findOne({ emailId: emailId });
-    if (c === null) return "-1";
-    await b.updateOne({ emailId: emailId }, { $set: { CheckedIn: true } });
-    return "Updated successfully";
-}
+// export const putCheckIne = async (emailId) => {
+//     let b = await bookings();
+//     let c = await b.findOne({ emailId: emailId });
+//     if (c === null) return "-1";
+//     await b.updateOne({ emailId: emailId }, { $set: { CheckedIn: true } });
+//     return "Updated successfully";
+// }
 
-export const putCheckOutb = async (BookingId) => {
-    let b = await bookings();
-    let c = await b.findOne({ BookingId: BookingId });
-    if (c === null) return "-1";
-    if(c.CheckedIn == true){
-        await b.updateOne({ BookingId: BookingId }, { $set: { CheckedOut: true } });
-    }
-    return "Updated successfully";
-}
+// export const putCheckOutb = async (BookingId) => {
+//     let b = await bookings();
+//     let c = await b.findOne({ BookingId: BookingId });
+//     if (c === null) return "-1";
+//     if(c.CheckedIn == true){
+//         await b.updateOne({ BookingId: BookingId }, { $set: { CheckedOut: true } });
+//     }
+//     return "Updated successfully";
+// }
 
-export const putCheckOute = async (emailId) => {
-    let b = await bookings();
-    let c = await b.findOne({ emailId: emailId });
-    if (c === null) return "-1";
-    if(c.CheckedIn == true){
-        await b.updateOne({ emailId: emailId }, { $set: { CheckedOut: true } });
-    }
-    return "Updated successfully";
-}
+// export const putCheckOute = async (emailId) => {
+//     let b = await bookings();
+//     let c = await b.findOne({ emailId: emailId });
+//     if (c === null) return "-1";
+//     if(c.CheckedIn == true){
+//         await b.updateOne({ emailId: emailId }, { $set: { CheckedOut: true } });
+//     }
+//     return "Updated successfully";
+// }

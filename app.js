@@ -24,6 +24,32 @@ app.use(
     //cookie: { secure: false },
   })
 );
+
+
+// /* MIDDLE WARE FUNCTIONS */
+// app.use('/',async(req,res,next) => {
+//   if(req.url === '/'){
+//     if(req.session.user){
+//         if(req.session.user.role === "admin"){
+//             res.redirect('/admin/Dashboard');
+//         }else if(req.session.user.role === "user"){
+//             res.redirect('/guest/Homepage');
+//         }
+//     }else{
+//         res.redirect('/home');
+//     }
+// }else{
+//     next();
+// }
+// });
+/* MIDDLEWARE START */
+
+
+
+
+/* MIDDLEWARE END */
+
+
 app.engine("handlebars", exphbs.engine({ defaultLayout: "main",
 helpers:{eq:(v1,v2)=>v1===v2,
   isSelected:function(code,phonePrefix){
