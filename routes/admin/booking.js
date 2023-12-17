@@ -92,4 +92,37 @@ router
     return res.status(404).render('error',{title:'Error',error: e});
   }
 });
+
+
+router
+  .route("/book/:id")
+  .put(async (req, res) => {
+    try {
+      console.log('in update');
+      const bookingId = req.params.id;
+      console.log(bookingId,'id');
+     const booking =BookingFunctions.getBookingByIdAndTrue(bookingId);
+     return res.json({success:true})
+    } catch (e) {
+      console.error(e); // Log the error
+      res.status(500).send('Error occurred: ' + e.message); // Send detailed error message
+    }
+})
+
+router
+  .route("/deleteBooking/:id")
+  .delete(async (req, res) => {
+    try {
+      console.log(req.params.id , 'iddd');
+      let deleteStatus = await BookingFunctions.DeleteBooking(
+        req.params.id
+      );
+      if(deleteStatus.deleted === true ){
+
+        res.status(200).json({ success: true, message: 'Booking deleted' });
+      }
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Error deleting booking' });
+    }
+})
 export default router;

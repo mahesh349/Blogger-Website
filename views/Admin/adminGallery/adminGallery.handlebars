@@ -1,10 +1,58 @@
-<h1>Gallery:</h1>
-  <div>
-    
-    {{#each images}}
-      <img src="{{this.url}}" alt="Hotel Image">
-    {{/each}}
+<header>
+    <a href="/guest">back to guest Homepage</a>
+</header>
+<main>
+  <form id="imageUploadForm" enctype="multipart/form-data">
+    <input type="file" id="imageInput" name="image" accept="image/*">
+    <button type="submit" >Upload Image</button>
+  </form>
+
+  <form id="imageTextInput" enctype="multipart/form-data">
+    <input type="text" id="imageTextInput" name="imageTextInput">
+    <button type="submit" >Delete Image</button>
+  </form>
+
+  <div class="container mt-4">
+    <div class="row">
+      {{#each AdminLink}}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <img src="{{this}}" class="card-img-top" alt="Hotel Photos">
+          <div class="card-body">
+            <p class="card-text">Some description if needed</p>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
   </div>
-<footer>
-  <a href="/admin">back to admin Dashboard</a>
-</footer>
+</main>
+
+<script>
+  document.getElementById('imageUploadForm').addEventListener('submit',function(event){
+    event.preventDefault();
+    const imageFile = document.getElementById('imageInput').files[0];
+    if (imageFile) {
+        uploadImage(imageFile);
+    } else {
+        alert('Please select an image file to upload.');
+    }
+  });
+
+  function uploadImage(imageFile) {
+        const formData = new FormData();
+        formData.append('image', imageFile);
+
+        fetch('/admin/gallery/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert('Image Upload Success.');
+        })
+        .catch(error => {
+            alert('Could not add image.');
+        });
+    }  
+</script>

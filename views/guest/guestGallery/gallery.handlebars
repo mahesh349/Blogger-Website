@@ -1,5 +1,29 @@
-
+{{!-- <main>
+  <div id="GuestGallery" >
+    {{#each link}}
+    <img src="{{this}}" alt="Hotel Photos">
+    {{/each}}
+  </div>
+</main>
 <footer>
+  <a href="/guest/feedback">back to feedback Page</a>
+</footer> --}}
 
-  <a href="/guest">back to guest Homepage</a>
+<main>
+  <div class="container mt-4">
+    <div class="row">
+      {{#each link}}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <img src="{{this}}" class="card-img-top" alt="Hotel Photos">
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</main>
+<footer class="mt-4">
+  <div class="container text-center">
+    <a href="/guest" class="btn btn-primary">back to guest Homepage</a>
+  </div>
 </footer>

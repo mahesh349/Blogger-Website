@@ -3,15 +3,18 @@
 // routes/gallery.js
 import express from 'express';
 import multer from 'multer';
-import { uploadImageToFirebase, deleteImageFromFirebase, saveImageDetailsToMongoDB } from '../../data/gallery.js';
+import { uploadImageToFirebase, deleteImageFromFirebase, saveImageDetailsToMongoDB, GetAllFromMongoDB } from '../../data/gallery.js';
 
 const router = express.Router();
 const upload = multer();
 
 router.get("/", async (req, res) => {
+  console.log("in gallery routes");
   try {
+    let Adminimages = await GetAllFromMongoDB();
+    console.log(Adminimages);
     res.render("./Admin/adminGallery/adminGallery", {
-      title: "admin gallery manipulation",
+      title: "admin gallery manipulation",AdminLink: Adminimages
     });
   } catch (e) {}
 });

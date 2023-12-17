@@ -67,6 +67,21 @@ export const GetBooking = async(firstName, emailId) => {
     }
 };
 
+export const getBookingByIdAndTrue = async (bookingId) => {
+    let bookingCollection = await bookings();
+    let UpdateEventData = {
+        $set: { BookingStatus: true }
+    };
+    const updatedBooking = await bookingCollection.findOneAndUpdate(
+        {_id: new ObjectId(bookingId)},
+        UpdateEventData,
+        {returnDocument: 'after'}
+      );
+      if(!updatedBooking){
+        throw `update failed could not update data`;
+      }
+      return updatedBooking;
+}
 export const GetAllBooking = async(firstName, emailId) => {
     let GetAllBookingId = await bookings();
     console.log(emailId,firstName);

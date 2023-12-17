@@ -1,38 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Rooms</title>
-    <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-{{#if message}}
-    <div class="alert">
-        {{message}}
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-    </div>
-{{/if}}
+<main>
+    {{#if message}}
+        <div class="alert">
+            {{message}}
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        </div>
+    {{/if}}
 
 
-{{#each rooms}}
-    <div class="room-card">
-        <h2>Room {{this.roomNumber}}</h2>
-        <p>Type: {{this.roomType}}</p>
-        <p>Price: ${{this.roomPrice}}</p>
-        <p>Availability: {{#if this.availability}}Available{{else}}Not Available{{/if}}</p>
-        <p>Description: {{this.roomDescription}}</p>
-        {{#if this.roomPhotos}}
-            <div>
-                {{#each this.roomPhotos}}
-                    <img src="{{this}}" alt="Room Photo" class="room-photo">
-                {{/each}}
-            </div>
-        {{/if}}
-        <p>cleanStatus: {{#if this.cleanStatus}}Clean{{else}}Dirty{{/if}}</p>
-        <a href="/guest/room/booking/{{this.roomNumber}}" class="booking-button">Book</a>
-    </div>
-{{/each}}
-</body>
-</html>
+    {{#each rooms}}
+        <div class="room-card">
+            <h2>Room {{this.roomNumber}}</h2>
+            <p>Type: {{this.roomType}}</p>
+            <p>Price: ${{this.roomPrice}}</p>
+            <p>Availability: {{#if this.availability}}Available{{else}}Not Available{{/if}}</p>
+            <p>Description: {{this.roomDescription}}</p>
+            {{#if this.roomPhotos}}
+                <div>
+                    {{#each this.roomPhotos}}
+                        <img src="{{this}}" alt="Room Photo" class="room-photo">
+                    {{/each}}
+                </div>
+            {{/if}}
+            <p>cleanStatus: {{#if this.cleanStatus}}Clean{{else}}Dirty{{/if}}</p>
+            <a href="/guest/room/booking/{{this.roomNumber}}" class="booking-button">Book</a>
+        </div>
+    {{/each}}
+</main>
 
 <footer>
 

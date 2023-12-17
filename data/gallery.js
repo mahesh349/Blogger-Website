@@ -17,12 +17,14 @@ export const deleteImageFromFirebase = async (fileName) => {
     await deleteObject(storageRef);
 };
 
-// export const saveGalleryDetailsToMongoDB = async (imageData) => {
-//   const GalleryData = await gallery();
-//   const InsertGalleryData = await GalleryData.insertOne(imageData);
-//   if (InsertGalleryData.insertedCount === 0) throw new Error('Could not add image details to MongoDB.');
-//   return InsertGalleryData.insertedId;
-// }
+export const GetAllFromMongoDB = async () => {
+    console.log("In data function");
+    const GalleryData = await gallery();
+    const insertInfo = await GalleryData.find({}, { projection: { url: 1 } }).toArray();
+    console.log(insertInfo);
+    return insertInfo.map(doc => doc.url);
+};
+
 
 
 export const saveImageDetailsToMongoDB = async (roomDetails) => {
