@@ -1,3 +1,5 @@
+# Project Name: SuitStay
+
 ## Running the Application
 
 ```bash
