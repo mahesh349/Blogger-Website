@@ -6,14 +6,14 @@
     let checkinDate = document.getElementById('CheckinDateInput').value;
     document.getElementById('CheckoutDateInput').disabled = false;
 
-    // Set min attribute for checkout date as checkin date + 1 day
+   
     if (checkinDate !== '') {
       let nextDay = new Date(checkinDate);
       nextDay.setDate(nextDay.getDate() + 1);
       let minDate = nextDay.toISOString().split('T')[0];
       document.getElementById('CheckoutDateInput').setAttribute('min', minDate);
 
-      // Automatically adjust checkout date if already selected and before the new checkin date
+     
       let checkoutDate = document.getElementById('CheckoutDateInput').value;
       if (checkoutDate !== '' && checkoutDate < checkinDate) {
         document.getElementById('CheckoutDateInput').value = minDate;
@@ -24,16 +24,12 @@
     }
   }
 
-  window.onload = function () {
-    
+ window.onload = function() {
     const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-    const formattedYesterday = yesterday.toISOString().split('T')[0];
-    document.getElementById('CheckinDateInput').setAttribute('min', formattedYesterday);
-
+    const formattedToday = today.toISOString().split('T')[0];
+    document.getElementById('CheckinDateInput').setAttribute('min', formattedToday);
     document.getElementById('CheckinDateInput').addEventListener('change', setMinCheckoutDate);
-  };
+};
 
 
 </script>

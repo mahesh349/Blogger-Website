@@ -10,13 +10,29 @@ import * as helpers from "../helpers.js"
 import { BookFirstName, BookLastName, BookEmailId, BookContactNumber } from "../helpers.js"
 
 const changeDateFormat = (dateValue) => {
-  const date = new Date(dateValue)
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
+  const date = new Date(dateValue);
+  
+ 
+  date.setDate(date.getDate() + 1);
+  
+ 
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  
+  return `${month}-${day}-${year}`;
+};
 
-  return `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}-${year}`
-}
+const changeDateFormatBooking = (dateValue) => {
+  const date = new Date(dateValue);
+  
+ 
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  
+  return `${month}-${day}-${year}`;
+};
 
 export const validBooking = async (bookingDates, checkinDate, checkoutDate) => {
   const newCheckinDate = new Date(checkinDate)
@@ -111,10 +127,10 @@ export const CreateBooking = async (
     emailId = emailId.toLowerCase()
 
     const Booking_Current_Date = new Date()
-    const Final_BookDate = changeDateFormat(Booking_Current_Date) //mm-dd-yyyy
+    const Final_BookDate = changeDateFormatBooking(Booking_Current_Date) //mm-dd-yyyy
     const checkIn_FinalDate = changeDateFormat(checkInDate)
     const checkOut_FinalDate = changeDateFormat(checkOutDate)
-
+  
     const GuestBookingDetails = {
       firstName: firstAcctName,
       lastName: lastAcctName,
@@ -124,7 +140,7 @@ export const CreateBooking = async (
       CheckinDate: checkIn_FinalDate,
       CheckOutDate: checkOut_FinalDate,
       BookingStatus: false,
-      cleanStatus: false, // addede trial code
+      cleanStatus: false,
       roomNumber: validateRoomNumber,
       roomType: validateRoomType,
       roomPrice: validateRoomPrice,

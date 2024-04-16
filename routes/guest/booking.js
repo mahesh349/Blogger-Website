@@ -1,5 +1,5 @@
 import { Router } from "express"
-const router = Router()
+
 import {
   fetchBookindData,
   cardPaymnetOnSuccess,
@@ -8,12 +8,13 @@ import {
   DeleteBooking,
   UpdateBooking,
 } from "../../data/booking.js"
+
 import { getRoomByNumber, roomNumberToId } from "../../data/room.js"
 import xss from "xss"
 import * as helpers from "../../helpers.js"
 import fs from "fs"
 import { createReceiptPDF } from "../../utils/createPdf.js"
-
+const router = Router();
 router.route("/").get(async (req, res) => {
   try {
     res.render("./guest/guestBooking/book", {
@@ -34,6 +35,8 @@ router.route("/book/:roomNumber").post(async (req, res) => {
     const phoneNum = AddBookingData.phone
     const checkInDate = AddBookingData.CheckinDateInput
     const checkOutDate = AddBookingData.CheckoutDateInput
+    console.log("CheckinDate = "+checkInDate)
+    console.log("CheckoutDate = "+checkOutDate)
     const firstNameErr = {
       empty: "First Name cannot be Empty",
       invalid: "First Name is invalid and cannot be less than 2 letters",
@@ -56,7 +59,7 @@ router.route("/book/:roomNumber").post(async (req, res) => {
     //const checkInDate = await helpers.
     let roomNumber = parseInt(req.params.roomNumber, 10)
     let bookedRoom = await getRoomByNumber(roomNumber)
-
+ 
     const newBooking = await CreateBooking(
       validateFName,
       validateLName,
@@ -87,7 +90,7 @@ router.route("/book/:roomNumber").post(async (req, res) => {
       console.log("in if block")
       const roomNumberVal = parseInt(req.params.roomNumber, 10)
       const roomId = await roomNumberToId(roomNumberVal)
-      console.log(e=== "error: please book another rooom")
+      console.log(e === "error: please book another room")
       res.render("./guest/guestBooking/booking", {
         error: "Room in given period is occupied, Please book another room or another duration",
         room: roomId,

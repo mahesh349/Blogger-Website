@@ -13,6 +13,43 @@ import * as connection from "../config/mongoConnection.js"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import storage from "../config/firebaseConfig.js"
 
+const changeDateFormatBooking = (dateValue) => {
+  const date = new Date(dateValue);
+  
+ 
+  date.setDate(date.getDate() );
+  
+ 
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  
+  return `${month}-${day}-${year}`;
+};
+
+
+export const roomAvailable = (bookingDates, today) => {
+ 
+  const todayDate = new Date(today);
+
+  
+  for (const dateRange of bookingDates) {
+    
+    const existingCheckinDate = new Date(dateRange.checkinDate);
+    const existingCheckoutDate = new Date(dateRange.checkoutDate);
+
+   
+    if (todayDate >= existingCheckinDate && todayDate < existingCheckoutDate) {
+    
+      return true;
+    }
+  }
+
+
+  return false;
+};
+
+
 export const createRoom = async (
   roomNumber,
   roomType,
@@ -44,6 +81,7 @@ export const createRoom = async (
     roomType,
     roomPrice,
     availability,
+    occupied: false,
     roomPhotos,
     roomDescription,
     cleanStatus,
@@ -68,13 +106,35 @@ export const createRoom = async (
 
 export const getAllRooms = async () => {
   try {
-    const roomCollection = await rooms()
-    let allRooms = await roomCollection.find({}).toArray()
-    return allRooms
+   
+    const roomCollection = await rooms();
+    const allRooms = await roomCollection.find({}).toArray();
+    const currentDate = changeDateFormatBooking(new Date());
+    console.log("currentDate =" + currentDate)
+    for (const room of allRooms) {
+      
+      const overlapFound = roomAvailable(room.bookingDates, currentDate );
+       
+      if (overlapFound) {
+        await roomCollection.updateOne(
+          { _id: room._id },
+          { $set: { occupied: true } }
+        );
+        console.log("room occupied set to true")
+      } else {
+ 
+        await roomCollection.updateOne(
+          { _id: room._id },
+          { $set: { occupied: false } }
+        );
+        console.log("room occupied set to false")
+      }
+    }
+    return allRooms;
   } catch (e) {
-    throw e
+    throw e;
   }
-}
+};
 
 export const getRoomByNumber = async (roomNumber) => {
   try {
