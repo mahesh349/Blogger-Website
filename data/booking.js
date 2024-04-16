@@ -2,26 +2,41 @@
 // CREATE: Room Number, booking date, checkin date, checkout date, guest name, guest email, booking status
 // Delete: guest name, guest email, room number, checkin date
 // READ: name, email, room number
-import { ObjectId } from "mongodb";
-import { bookings } from "../config/mongoCollections.js";
-import * as helpers from "../helpers.js";
+import { ObjectId } from "mongodb"
+import { bookings } from "../config/mongoCollections.js"
+import { rooms } from "../config/mongoCollections.js"
+import * as helpers from "../helpers.js"
 //import * as helpers from '../helpers.js'
-import {
-  BookFirstName,
-  BookLastName,
-  BookEmailId,
-  BookContactNumber,
-} from "../helpers.js";
+import { BookFirstName, BookLastName, BookEmailId, BookContactNumber } from "../helpers.js"
 
+const changeDateFormat = (dateValue) => {
+  const date = new Date(dateValue)
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
 
-const changeDateFormat = (dateValue)=>{
-  const date = new Date(dateValue);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  
-  return`${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}-${year}`;
+  return `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}-${year}`
 }
+
+export const validBooking = async (bookingDates, checkinDate, checkoutDate) => {
+  const newCheckinDate = new Date(checkinDate)
+  const newCheckoutDate = new Date(checkoutDate)
+
+  //each booking date
+  for (let dateRange of bookingDates) {
+    const existingCheckinDate = new Date(dateRange.checkinDate)
+    const existingCheckoutDate = new Date(dateRange.checkoutDate)
+
+    if (newCheckinDate < existingCheckoutDate && newCheckoutDate > existingCheckinDate) {
+      // overlap is found
+      return true
+    }
+  }
+
+  // No overlaps found
+  return false
+}
+
 export const CreateBooking = async (
   firstName,
   lastName,
@@ -31,66 +46,74 @@ export const CreateBooking = async (
   CheckOutDate,
   roomNumber,
   roomPrice,
-  roomType,
+  roomType
 ) => {
   try {
-    const AddBookingsDetails = await bookings();
+    const AddBookingsDetails = await bookings()
     if (
       !firstName ||
       !lastName ||
       !emailId ||
       !contactNumber ||
       !CheckinDate ||
-      !CheckOutDate || !roomNumber || !roomPrice || !roomType
+      !CheckOutDate ||
+      !roomNumber ||
+      !roomPrice ||
+      !roomType
     )
-      throw `Error: Please fill all the sections`;
-    
-    const checkInDate = new Date(CheckinDate);
-    const checkOutDate = new Date(CheckOutDate);
+      throw `Error: Please fill all the sections`
 
-    const differenceInMs = checkOutDate - checkInDate;
+    const checkInDate = new Date(CheckinDate)
+    const checkOutDate = new Date(CheckOutDate)
 
-    const millisecondsInDay = 1000 * 60 * 60 * 24;
-    const numberOfDays = Math.floor(differenceInMs / millisecondsInDay);
+    const differenceInMs = checkOutDate - checkInDate
 
-    let totalPrice = Number(roomPrice) * numberOfDays;
-    let taxPrice = totalPrice * 0.2;
-    let serviceFee = totalPrice * 0.1;
-    totalPrice = parseFloat(totalPrice.toFixed(2));
-    taxPrice = parseFloat(taxPrice.toFixed(2));
-    serviceFee = parseFloat(serviceFee.toFixed(2));
-    let finalPrice = totalPrice + taxPrice + serviceFee;
-    finalPrice = parseFloat(finalPrice.toFixed(2));
+    const millisecondsInDay = 1000 * 60 * 60 * 24
+    const numberOfDays = Math.floor(differenceInMs / millisecondsInDay)
+
+    let totalPrice = Number(roomPrice) * numberOfDays
+    let taxPrice = totalPrice * 0.2
+    let serviceFee = totalPrice * 0.1
+    totalPrice = parseFloat(totalPrice.toFixed(2))
+    taxPrice = parseFloat(taxPrice.toFixed(2))
+    serviceFee = parseFloat(serviceFee.toFixed(2))
+    let finalPrice = totalPrice + taxPrice + serviceFee
+    finalPrice = parseFloat(finalPrice.toFixed(2))
 
     //firstName = await BookFirstName(firstName);
     //lastName = await BookLastName(lastName);
-    const firstNameErr = {empty:'First Name cannot be Empty', invalid:'First Name is invalid and cannot be less than 2 letters'};
-    const lastNameErr = {empty:'Last Name cannot be Empty', invalid:'Last Name is invalid and cannot be less than 2 letters'};
-    const firstAcctName = await helpers.validateString(firstName,2,25,firstNameErr);
-    const lastAcctName = await helpers.validateString(lastName,2,25,lastNameErr);
-    emailId = await BookEmailId(emailId);
+    const firstNameErr = {
+      empty: "First Name cannot be Empty",
+      invalid: "First Name is invalid and cannot be less than 2 letters",
+    }
+    const lastNameErr = {
+      empty: "Last Name cannot be Empty",
+      invalid: "Last Name is invalid and cannot be less than 2 letters",
+    }
+    const firstAcctName = await helpers.validateString(firstName, 2, 25, firstNameErr)
+    const lastAcctName = await helpers.validateString(lastName, 2, 25, lastNameErr)
+    emailId = await BookEmailId(emailId)
     //contactNumber = await BookContactNumber(contactNumber);
 
-    firstName = firstName.trim();
-    lastName = lastName.trim();
-    emailId = emailId.trim();
-    contactNumber = contactNumber.trim();
-    const validatePhoneNumber = await helpers.validatePhone(contactNumber);
-    CheckinDate = CheckinDate.trim();
-    CheckOutDate = CheckOutDate.trim();
-    const validateRoomNumber= await helpers.checkRoomNumber(roomNumber);
-    const validateRoomPrice = await helpers.checkRoomPrice(roomPrice);
-    const validateRoomType = await helpers.checkRoomType(roomType);
-
+    firstName = firstName.trim()
+    lastName = lastName.trim()
+    emailId = emailId.trim()
+    contactNumber = contactNumber.trim()
+    const validatePhoneNumber = await helpers.validatePhone(contactNumber)
+    CheckinDate = CheckinDate.trim()
+    CheckOutDate = CheckOutDate.trim()
+    const validateRoomNumber = await helpers.checkRoomNumber(roomNumber)
+    const validateRoomPrice = await helpers.checkRoomPrice(roomPrice)
+    const validateRoomType = await helpers.checkRoomType(roomType)
 
     //firstName = firstName.toLowerCase();
     //lastName = lastName.toLowerCase();
-    emailId = emailId.toLowerCase();
+    emailId = emailId.toLowerCase()
 
-    const Booking_Current_Date = new Date();
-    const Final_BookDate = changeDateFormat(Booking_Current_Date);//mm-dd-yyyy
-    const checkIn_FinalDate = changeDateFormat(checkInDate);
-    const checkOut_FinalDate = changeDateFormat(checkOutDate);
+    const Booking_Current_Date = new Date()
+    const Final_BookDate = changeDateFormat(Booking_Current_Date) //mm-dd-yyyy
+    const checkIn_FinalDate = changeDateFormat(checkInDate)
+    const checkOut_FinalDate = changeDateFormat(checkOutDate)
 
     const GuestBookingDetails = {
       firstName: firstAcctName,
@@ -110,91 +133,120 @@ export const CreateBooking = async (
       taxPrice: taxPrice,
       serviceFee: serviceFee,
       finalPrice: finalPrice,
-    };
-    const AddBooking = await AddBookingsDetails.insertOne(GuestBookingDetails);
-    if (!AddBooking.acknowledged || !AddBooking.insertedId) {
-      throw `Could not add Booking data`;
     }
-    return AddBooking;
+    const roomCollection = await rooms()
+    let bookedDates = {
+      checkinDate: checkIn_FinalDate,
+      checkoutDate: checkOut_FinalDate,
+    }
+
+    const roomFound = await roomCollection.findOne({ roomNumber: roomNumber })
+   
+
+    let overlapFound =await validBooking(roomFound.bookingDates, checkIn_FinalDate, checkOut_FinalDate)
+    console.log("overlapFound ="+ overlapFound)
+    if (overlapFound) {  
+      throw "Room Occupied"
+    }
+    const AddBooking = await AddBookingsDetails.insertOne(GuestBookingDetails)
+    if (!AddBooking.acknowledged || !AddBooking.insertedId) {
+      throw `Could not add Booking data`
+    }
+
+ 
+
+    const updateResult = await roomCollection.updateOne(
+      { roomNumber: roomNumber },
+      {
+        $push: {
+          bookingDates: bookedDates,
+        },
+      }
+    )
+
+    if (!updateResult) {
+      throw " error in updating booking dates in room"
+    }
+    return AddBooking
   } catch (e) {
-    throw `Error: ${e}`;
+    throw `Error: ${e}`
   }
-};
+}
 
 export const GetBooking = async (firstName, emailId) => {
   try {
-    helpers.stringValidation(firstName);
-    helpers.stringValidation(emailId);
-    let GetBookingId = await bookings();
+    helpers.stringValidation(firstName)
+    helpers.stringValidation(emailId)
+    let GetBookingId = await bookings()
     let GetBookingDetails = await GetBookingId.findOne({
       firstName: firstName,
       emailId: emailId,
-    });
+    })
     if (GetBookingDetails !== true) {
-      throw `The Booking ID Does not exists`;
+      throw `The Booking ID Does not exists`
     }
   } catch (e) {
-    throw `Error: ${e}`;
+    throw `Error: ${e}`
   }
-};
+}
 
 export const getBookingByIdAndTrue = async (bookingId) => {
   try {
-    bookingId = await helpers.checkId(bookingId);
-    let bookingCollection = await bookings();
+    bookingId = await helpers.checkId(bookingId)
+    let bookingCollection = await bookings()
     let UpdateEventData = {
       BookingStatus: true,
-    };
+    }
     const updatedBooking = await bookingCollection.findOneAndUpdate(
       { _id: new ObjectId(bookingId) },
-      { $set: UpdateEventData},
+      { $set: UpdateEventData },
       { returnDocument: "after" }
-    );
+    )
     if (!updatedBooking) {
-      throw `update failed could not update data`;
+      throw `update failed could not update data`
     }
-    return updatedBooking;
+    return updatedBooking
   } catch (e) {
-    throw `Error: ${e}`;
+    throw `Error: ${e}`
   }
-};
+}
 export const GetAllBooking = async (firstName, emailId) => {
   try {
-    helpers.stringValidation(firstName);
-    helpers.stringValidation(emailId);
-    let GetAllBookingId = await bookings();
+    helpers.stringValidation(firstName)
+    helpers.stringValidation(emailId)
+    let GetAllBookingId = await bookings()
     let GetAllBookingDetails = await GetAllBookingId.find({
       firstName: firstName,
       emailId: emailId,
-    }).toArray();
-    return GetAllBookingDetails;
+    }).toArray()
+    return GetAllBookingDetails
   } catch (e) {
-    throw `Error: ${e}`;
+    throw `Error: ${e}`
   }
-};
+}
 
 export const ShowAllBooking = async () => {
   try {
-    let GetAllBookingId = await bookings();
-    let GetAllBookingDetails = await GetAllBookingId.find({}).toArray();
-    return GetAllBookingDetails;
+    let GetAllBookingId = await bookings()
+    let GetAllBookingDetails = await GetAllBookingId.find({}).toArray()
+    return GetAllBookingDetails
   } catch (e) {
-    throw `Error: ${e}`;
+    throw `Error: ${e}`
   }
-};
+}
 
 export const DeleteBooking = async (BookId) => {
   try {
-    BookId = helpers.checkId(BookId);
-    let DeleteBooking = await bookings();
+    BookId = helpers.checkId(BookId)
+    let DeleteBooking = await bookings()
     let DeleteBookingData = await DeleteBooking.findOneAndDelete({
       _id: new ObjectId(BookId),
-    });
-    return { ...DeleteBookingData, deleted: true };
+    })
+    return { ...DeleteBookingData, deleted: true }
   } catch (e) {
-    throw `Error: ${e}`;
+    throw `Error: ${e}`
   }
-};
+}
 
 export const UpdateBooking = async (
   id,
@@ -205,73 +257,62 @@ export const UpdateBooking = async (
   CheckinDate,
   CheckOutDate
 ) => {
-  try {
-    if (
-      !firstName ||
-      !lastName ||
-      !emailId ||
-      !contactNumber ||
-      !CheckinDate ||
-      !CheckOutDate
-    )
-      throw `Error: Please fill all the sections`;
+  if (!firstName || !lastName || !emailId || !contactNumber || !CheckinDate || !CheckOutDate)
+    throw `Error: Please fill all the sections`
 
-    const checkInDate = new Date(CheckinDate);
-    const checkOutDate = new Date(CheckOutDate);
+  const checkInDate = new Date(CheckinDate)
+  const checkOutDate = new Date(CheckOutDate)
 
-    const differenceInMs = checkOutDate - checkInDate;
+  const differenceInMs = checkOutDate - checkInDate
 
-    const millisecondsInDay = 1000 * 60 * 60 * 24;
-    const numberOfDays = Math.floor(differenceInMs / millisecondsInDay);
+  const millisecondsInDay = 1000 * 60 * 60 * 24
+  const numberOfDays = Math.floor(differenceInMs / millisecondsInDay)
 
-    const roomPrice = Number(roomPrice) * numberOfDays;
+  const roomPrice = Number(roomPrice) * numberOfDays
 
-    firstName = await BookFirstName(firstName);
-    lastName = await BookLastName(lastName);
-    emailId = await BookEmailId(emailId);
-    //contactNumber = await BookContactNumber(contactNumber);
+  firstName = await BookFirstName(firstName)
+  lastName = await BookLastName(lastName)
+  emailId = await BookEmailId(emailId)
+  //contactNumber = await BookContactNumber(contactNumber);
 
-    firstName = firstName.trim();
-    lastName = lastName.trim();
-    emailId = emailId.trim();
-    contactNumber = contactNumber.trim();
-    CheckinDate = CheckinDate.trim();
-    CheckOutDate = CheckOutDate.trim();
+  firstName = firstName.trim()
+  lastName = lastName.trim()
+  emailId = emailId.trim()
+  contactNumber = contactNumber.trim()
+  CheckinDate = CheckinDate.trim()
+  CheckOutDate = CheckOutDate.trim()
 
-    firstName = firstName.toLowerCase();
-    lastName = lastName.toLowerCase();
-    emailId = emailId.toLowerCase();
+  firstName = firstName.toLowerCase()
+  lastName = lastName.toLowerCase()
+  emailId = emailId.toLowerCase()
 
-    const UpdateBooking = await bookings();
+  const UpdateBooking = await bookings()
 
-    let BookingData = {
-      firstName: firstName,
-      lastName: lastName,
-      emailId: emailId,
-      contactNumber: contactNumber,
-      CheckinDate: CheckinDate,
-      CheckOutDate: CheckOutDate,
-      roomPrice: roomPrice,
-    };
-    const UpdateBookingData = await UpdateBooking.findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: BookingData },
-      { returnOriginal: false }
-    );
-    if (!UpdateBookingData) {
-      throw `Update failed could not update data`;
-    }
-    return UpdateBookingData;
-  } catch (e) {
-    throw `Error: ${e}`;
+  let BookingData = {
+    firstName: firstName,
+    lastName: lastName,
+    emailId: emailId,
+    contactNumber: contactNumber,
+    CheckinDate: CheckinDate,
+    CheckOutDate: CheckOutDate,
+    roomPrice: roomPrice,
   }
-};
+  const UpdateBookingData = await UpdateBooking.findOneAndUpdate(
+    { _id: new ObjectId(id) },
+    { $set: BookingData },
+    { returnOriginal: false }
+  )
+  if (!UpdateBookingData) {
+    throw `Update failed could not update data`
+  }
+  return UpdateBookingData
+}
 
 export const cardPaymnetOnSuccess = async (bookingID, personName) => {
   try {
-    let getBookindDatas = await bookings();
-    const [firstName, lastName] = personName.split(" ");
-    const bookingIDDetails = await helpers.checkId(bookingID, "Booking Id");
+    let getBookindDatas = await bookings()
+    const [firstName, lastName] = personName.split(" ")
+    const bookingIDDetails = await helpers.checkId(bookingID, "Booking Id")
     const updateResult = await getBookindDatas.updateOne(
       {
         _id: new ObjectId(bookingIDDetails),
@@ -279,28 +320,28 @@ export const cardPaymnetOnSuccess = async (bookingID, personName) => {
       {
         $set: { paymentSuccess: true },
       }
-    );
+    )
     if (updateResult.matchedCount === 0) {
-      throw `No Matcing booking found or updateFailed`;
+      throw `No Matcing booking found or updateFailed`
     }
-    return updateResult;
+    return updateResult
   } catch (e) {
-    throw `Error: ${e}`;
+    throw `Error: ${e}`
   }
-};
+}
 
 export const fetchBookindData = async (bookingID) => {
   try {
-    let getBookindDatas = await bookings();
-    const objectBookingID = await helpers.checkId(bookingID, "Booking Id");
+    let getBookindDatas = await bookings()
+    const objectBookingID = await helpers.checkId(bookingID, "Booking Id")
     const fetchBookingRecords = await getBookindDatas.findOne({
       _id: new ObjectId(objectBookingID),
-    });
+    })
     if (!fetchBookingRecords) {
-      throw `No booking found for the given Id: ${objectBookingID}`;
+      throw `No booking found for the given Id: ${objectBookingID}`
     }
-    return fetchBookingRecords;
+    return fetchBookingRecords
   } catch (e) {
-    throw e;
+    throw e
   }
-};
+}
