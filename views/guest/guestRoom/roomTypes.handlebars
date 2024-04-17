@@ -1,0 +1,145 @@
+<script>
+  function setMinCheckoutDate(form) {
+    let checkinDateInput = form.querySelector('#CheckinDateInput');
+    let checkoutDateInput = form.querySelector('#CheckoutDateInput');
+
+    let checkinDate = checkinDateInput.value;
+    checkoutDateInput.disabled = false;
+
+    if (checkinDate !== '') {
+        let nextDay = new Date(checkinDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+        let minDate = nextDay.toISOString().split('T')[0];
+        checkoutDateInput.setAttribute('min', minDate);
+
+        let checkoutDate = checkoutDateInput.value;
+        if (checkoutDate !== '' && checkoutDate < checkinDate) {
+            checkoutDateInput.value = minDate;
+        }
+    } else {
+        checkoutDateInput.disabled = true;
+        checkoutDateInput.value = '';
+    }
+}
+
+window.onload = function() {
+    
+    let forms = document.querySelectorAll('.guest-room-form');
+
+   
+    forms.forEach(form => {
+        let checkinDateInput = form.querySelector('#CheckinDateInput');
+        
+      
+        const today = new Date();
+        const formattedToday = today.toISOString().split('T')[0];
+        checkinDateInput.setAttribute('min', formattedToday);
+
+       
+        checkinDateInput.addEventListener('change', () => setMinCheckoutDate(form));
+    });
+};
+
+
+</script>
+
+
+{{#if message}}
+  <div class="alert">
+    {{message}}
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+  </div>
+{{/if}}
+
+
+    <div class="room-card">
+     
+      <form action="/guest/room/findingRoom" method="POST" class="guest-room-form">
+ 
+         <p>Room Type: Single</p>
+        <p>Price: $13.09</p>
+        <p>Description: {{this.roomDescription}}</p>
+          <div>
+              <img src="{{this}}" alt="Room Photo" class="room-photo" />
+          </div>
+
+        <label for="roomType"></label>
+        <input id="roomType" name="roomType" value="single" type="hidden" />
+
+        <label for="roomPrice"></label>
+        <input id="roomPrice" name="roomPrice" value=13.09 type="hidden" />
+
+        <label for="CheckinDateInput">Checkin Date:</label>
+        <input id="CheckinDateInput" name="CheckinDateInput" type="date" onchange="setMinCheckoutDate(this.form)" />
+
+         <label for="CheckinDateInput">Checkout Date:</label>
+        <input id="CheckoutDateInput" name="CheckoutDateInput" type="date" disabled />
+
+        <button type="submit">Book</button>
+      </form>
+    </div>
+
+
+    {{!-- double Room --}}
+
+    <div class="room-card">
+     
+      <form action="/guest/room/findingRoom" method="POST" class="guest-room-form">
+ 
+         <p>Room Type: Double</p>
+        <p>Price: $20.00</p>
+        <p>Description: {{this.roomDescription}}</p>
+          <div>
+              <img src="{{this}}" alt="Room Photo" class="room-photo" />
+          </div>
+
+        <label for="roomType"></label>
+        <input id="roomType" name="roomType" value="double" type="hidden" />
+
+        <label for="roomPrice"></label>
+        <input id="roomPrice" name="roomPrice" value=20.00 type="hidden" />
+
+        <label for="CheckinDateInput">Checkin Date:</label>
+        <input id="CheckinDateInput" name="CheckinDateInput" type="date" onchange="setMinCheckoutDate()" />
+
+         <label for="CheckinDateInput">Checkout Date:</label>
+        <input id="CheckoutDateInput" name="CheckoutDateInput" type="date" disabled />
+
+        <button type="submit">Book</button>
+      </form>
+    </div>
+
+
+     {{!-- Suite Room --}}
+
+    <div class="room-card">
+     
+      <form action="/guest/room/findingRoom" method="POST" class="guest-room-form">
+ 
+         <p>Room Type: Suite</p>
+        <p>Price: $50.00</p>
+        <p>Description: {{this.roomDescription}}</p>
+          <div>
+              <img src="{{this}}" alt="Room Photo" class="room-photo" />
+          </div>
+
+        <label for="roomType"></label>
+        <input id="roomType" name="roomType" value="suite" type="hidden" />
+
+        <label for="roomPrice"></label>
+        <input id="roomPrice" name="roomPrice" value=50.00 type="hidden" />
+
+        <label for="CheckinDateInput">Checkin Date:</label>
+        <input id="CheckinDateInput" name="CheckinDateInput" type="date" onchange="setMinCheckoutDate()" />
+
+         <label for="CheckinDateInput">Checkout Date:</label>
+        <input id="CheckoutDateInput" name="CheckoutDateInput" type="date" disabled />
+
+        <button type="submit">Book</button>
+      </form>
+    </div>
+
+
+<footer>
+  <a href="/guest">back to guest Dashboard</a>
+</footer>

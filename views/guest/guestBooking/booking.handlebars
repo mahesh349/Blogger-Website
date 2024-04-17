@@ -1,38 +1,45 @@
 
 <script>
 
-
-  function setMinCheckoutDate() {
+function setMinCheckoutDate() {
     let checkinDate = document.getElementById('CheckinDateInput').value;
     document.getElementById('CheckoutDateInput').disabled = false;
 
-   
     if (checkinDate !== '') {
-      let nextDay = new Date(checkinDate);
-      nextDay.setDate(nextDay.getDate() + 1);
-      let minDate = nextDay.toISOString().split('T')[0];
-      document.getElementById('CheckoutDateInput').setAttribute('min', minDate);
+        let nextDay = new Date(checkinDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+        let minDate = nextDay.toISOString().split('T')[0];
+        document.getElementById('CheckoutDateInput').setAttribute('min', minDate);
 
-     
-      let checkoutDate = document.getElementById('CheckoutDateInput').value;
-      if (checkoutDate !== '' && checkoutDate < checkinDate) {
-        document.getElementById('CheckoutDateInput').value = minDate;
-      }
+        let checkoutDateInput = document.getElementById('CheckoutDateInput');
+        let checkoutDate = checkoutDateInput.value;
+
+        if (!checkoutDate || checkoutDate < minDate) {
+            checkoutDateInput.value = minDate;
+        }
     } else {
-      document.getElementById('CheckoutDateInput').disabled = true;
-      document.getElementById('CheckoutDateInput').value = '';
+        document.getElementById('CheckoutDateInput').disabled = true;
+        document.getElementById('CheckoutDateInput').value = '';
     }
-  }
+}
 
- window.onload = function() {
+window.onload = function() {
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
     document.getElementById('CheckinDateInput').setAttribute('min', formattedToday);
     document.getElementById('CheckinDateInput').addEventListener('change', setMinCheckoutDate);
 };
 
-
 </script>
+
+{{#if message}}
+  <div class="alert">
+    {{message}}
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+  </div>
+{{/if}}
+
+
   
   <p style="padding-left: 390px">Please check room details:</p>
   <form>
@@ -70,10 +77,11 @@
   <input type="tel" placeholder="123-456-7890" pattern="\d{3}-\d{3}-\d{4}" name="phone" id="phone" />
   <br />
   <label for="CheckinDateInput">Enter CheckIn Date</label>
-  <input type="date" id="CheckinDateInput" name="CheckinDateInput"  onchange="setMinCheckoutDate()" />
+  <input type="date" id="CheckinDateInput" name="CheckinDateInput"  value={{CheckinDate}}
+  onchange="setMinCheckoutDate()" />
   <br />
   <label for="CheckoutDateInput">Enter CheckOut Date</label>
-  <input type="date" id="CheckoutDateInput" name="CheckoutDateInput" disabled />
+  <input type="date" id="CheckoutDateInput" name="CheckoutDateInput"  value={{CheckoutDate}}  />
   <br />
   <button type="submit">Proceed For Payment</button>
 </form>

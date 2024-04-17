@@ -27,9 +27,9 @@ const changeDateFormatBooking = (dateValue) => {
   return `${month}-${day}-${year}`;
 };
 
-
+//function to check if a room is occupied or not using its bookingDates
 export const roomAvailable = (bookingDates, today) => {
- 
+  
   const todayDate = new Date(today);
 
   
@@ -48,6 +48,48 @@ export const roomAvailable = (bookingDates, today) => {
 
   return false;
 };
+
+
+//function to find if a booking is overlapping or not
+export const validBooking = async (bookingDates, checkinDate, checkoutDate) => {
+  const newCheckinDate = new Date(checkinDate)
+  const newCheckoutDate = new Date(checkoutDate)
+
+  //each booking date
+  for (let dateRange of bookingDates) {
+    const existingCheckinDate = new Date(dateRange.checkinDate)
+    const existingCheckoutDate = new Date(dateRange.checkoutDate)
+
+    if (newCheckinDate < existingCheckoutDate && newCheckoutDate > existingCheckinDate) {
+      // overlap is found
+      return true
+    }
+  }
+
+  // No overlaps found
+  return false
+}
+
+export const findRoomNumber =  async (checkinDate,checkoutDate,roomType) =>{
+  const roomsCollection = await rooms();
+  const roomsOfType =  await roomsCollection.find({ roomType }).toArray();
+  
+ 
+  for (const room of roomsOfType) {
+    const { roomNumber, bookingDates } = room;
+
+      const isRoomFree = await validBooking(bookingDates, checkinDate, checkoutDate);
+
+      if (!isRoomFree) {
+     
+       
+        return roomNumber;
+      }
+    }
+      
+        throw "No available room found for the specified dates and room type."
+      
+}
 
 
 export const createRoom = async (
@@ -357,3 +399,5 @@ export const runApp = async () => {
     await connection.closeConnection()
   }
 }
+
+console.log("roomNumber = " + await findRoomNumber("04-16-2024","04-19-2024","double"))
