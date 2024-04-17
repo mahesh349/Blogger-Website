@@ -27,8 +27,8 @@ router.route("/").get(async (req, res) => {
 
 router.route("/book/:roomNumber").post(async (req, res) => {
   try {
+    console.log("booking function fired");
     const AddBookingData = req.body
-
     const firstName = AddBookingData.FirstNameInput
     const lastName = AddBookingData.LastNameInput
     const emailInput = AddBookingData.EmailIdInput
@@ -56,7 +56,6 @@ router.route("/book/:roomNumber").post(async (req, res) => {
     const validateCheckInDate = await helpers.validateDates(checkInDate)
     const validateCheckOutDate = await helpers.validateDates(checkOutDate)
     await helpers.checkCheckInAndOutDate(checkInDate, checkOutDate)
-    //const checkInDate = await helpers.
     let roomNumber = parseInt(req.params.roomNumber, 10)
     let bookedRoom = await getRoomByNumber(roomNumber)
  

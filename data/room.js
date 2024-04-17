@@ -152,7 +152,8 @@ export const getAllRooms = async () => {
     const roomCollection = await rooms();
     const allRooms = await roomCollection.find({}).toArray();
     const currentDate = changeDateFormatBooking(new Date());
-    console.log("currentDate =" + currentDate)
+    console.log("currentDate = " + currentDate)
+
     for (const room of allRooms) {
       
       const overlapFound = roomAvailable(room.bookingDates, currentDate );
@@ -162,14 +163,14 @@ export const getAllRooms = async () => {
           { _id: room._id },
           { $set: { occupied: true } }
         );
-        console.log("room occupied set to true")
+        // console.log("room occupied set to true")
       } else {
  
         await roomCollection.updateOne(
           { _id: room._id },
           { $set: { occupied: false } }
         );
-        console.log("room occupied set to false")
+        // console.log("room occupied set to false")
       }
     }
     return allRooms;
@@ -400,4 +401,3 @@ export const runApp = async () => {
   }
 }
 
-console.log("roomNumber = " + await findRoomNumber("04-16-2024","04-19-2024","double"))

@@ -1,15 +1,32 @@
 import express from "express";
-const app = express();
+import amqp from "amqplib";
+import rateLimit from "express-rate-limit";
 import session from "express-session";
 import configRoutes from "./routes/RoutesIndex.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import exphbs from "express-handlebars";
+import { EventEmitter } from 'events';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 const staticDir = express.static(__dirname + "/public");
 
+
+//rabbitMQ constants
+const queueName = 'booking_queue';
+const processDelay = 3000; // 3 second in milliseconds for processing each request
+const queueRateLimit = 10000; // 10 seconds in milliseconds for processing each message from the queue
+//total ~13 seconds between processing each request in the queue
+
+
+//express rate limiter
+const limiter = rateLimit({
+  windowMs: 60 * 1000, //time window before requests refresh
+  max: 2,  //number of req per IP in time window
+  message: "Too many requests from this IP, please try again later."
+})
+
+const app = express();
 app.use("/public", staticDir);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -38,6 +55,69 @@ app.engine(
 );
 app.set("view engine", "handlebars");
 
+
+
+//RabbitMQ connection and return the channel
+async function connectRabbitMQ(){
+  try {
+
+    //connection
+    const connection = await amqp.connect('amqp://localhost');
+
+    //new channel creation
+    const channel = await connection.createChannel();
+
+    await channel.assertQueue(queueName,{
+      durable:false,
+    });
+    console.log("Connected to RabbitMQ , queue ready for use.");
+    return channel;
+    
+  } catch (error) {
+    console.error('Failed to connect to RabbitMQ:', error);
+    throw error;
+  }
+}
+
+// Publish requests
+async function publishToQueue(channel, request) {
+  const message = JSON.stringify(request);
+  channel.sendToQueue(queueName, Buffer.from(message));
+}
+
+
+//to wait for req to be consumed before executing booking function
+const eventEmitter = new EventEmitter();
+
+//consumer
+async function consumeFromQueue(channel) {
+  while (true) {
+      const msg = await channel.get(queueName, { noAck: false });
+
+      if (msg) {
+          const request = JSON.parse(msg.content.toString());
+          console.log('Processing request:', request);
+
+          await new Promise(resolve => setTimeout(resolve, processDelay));
+          
+          // Acknowledge message
+          channel.ack(msg);
+
+          // Emit event to notify that the request has been consumed
+          eventEmitter.emit('requestConsumed', request);
+
+          await new Promise(resolve => setTimeout(resolve, queueRateLimit));
+      } else {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+  }
+}
+
+
+
+
+
+//Middlewares
 //if user is admin, never let them see login and register
 app.use("/login", (req, res, next) => {
   if (req.session.user) {
@@ -179,7 +259,36 @@ app.use("/logout", (req, res, next) => {
   next();
 });
 
+
+
+app.use("/guest/booking/book/:roomNumber", limiter, async (req, res, next) => {
+  console.log("In booking_room middleware");
+  const request = req.body;
+
+  // Publish the request to the queue
+  await publishToQueue(channel, request);
+  console.log('Request received and added to queue');
+
+  // Listen for'requestConsumed'
+  eventEmitter.once('requestConsumed', (consumedRequest) => {
+      // Check if the consumed request matches the current request
+      if (consumedRequest.id === request.id) {
+          console.log('Request has been consumed');
+          // proceed to the booking route
+          next(); 
+      }
+  });
+
+ 
+});
+
+
+
 configRoutes(app);
+
+const channel = await connectRabbitMQ();
+
+consumeFromQueue(channel);
 
 app.listen(3000, () => {
   console.log("We've now got a server!");
