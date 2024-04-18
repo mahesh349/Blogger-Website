@@ -6,7 +6,7 @@
 // and get all will show all the room deails and its photos in one page
 
 import { ObjectId } from "mongodb"
-import { rooms } from "../config/mongoCollections.js"
+import { rooms,bookings } from "../config/mongoCollections.js"
 import { photos } from "../config/mongoCollections.js"
 import * as helpers from "../helpers.js"
 import * as connection from "../config/mongoConnection.js"
@@ -28,30 +28,37 @@ const changeDateFormatBooking = (dateValue) => {
 };
 
 //function to check if a room is occupied or not using its bookingDates
-export const roomAvailable = (bookingDates, today) => {
+
+//function to check if a room is occupied or not using its bookingDates
+export const isOccupied = async (bookingDates, today) => {
   
   const todayDate = new Date(today);
 
-  
   for (const dateRange of bookingDates) {
     
     const existingCheckinDate = new Date(dateRange.checkinDate);
     const existingCheckoutDate = new Date(dateRange.checkoutDate);
-
+    const bookingCollection = await bookings();
    
     if (todayDate >= existingCheckinDate && todayDate < existingCheckoutDate) {
     
-      return true;
+      const booking = await bookingCollection.findOne({ _id: new ObjectId(dateRange.bookingId) });
+            
+      if (booking && booking.BookingStatus) {
+        console.log("booking.BookingStatus =" + booking.BookingStatus)
+      
+          return true;
+      }
     }
   }
-
 
   return false;
 };
 
 
+
 //function to find if a booking is overlapping or not
-export const validBooking = async (bookingDates, checkinDate, checkoutDate) => {
+export const isOverlapping = async (bookingDates, checkinDate, checkoutDate) => {
   const newCheckinDate = new Date(checkinDate)
   const newCheckoutDate = new Date(checkoutDate)
 
@@ -78,7 +85,7 @@ export const findRoomNumber =  async (checkinDate,checkoutDate,roomType) =>{
   for (const room of roomsOfType) {
     const { roomNumber, bookingDates } = room;
 
-      const isRoomFree = await validBooking(bookingDates, checkinDate, checkoutDate);
+      const isRoomFree = await isOverlapping(bookingDates, checkinDate, checkoutDate);
 
       if (!isRoomFree) {
      
@@ -154,23 +161,24 @@ export const getAllRooms = async () => {
     const currentDate = changeDateFormatBooking(new Date());
     console.log("currentDate = " + currentDate)
 
+    //for loop to update isOccupuied for all rooms based on booking dates and bookingStatuses
     for (const room of allRooms) {
       
-      const overlapFound = roomAvailable(room.bookingDates, currentDate );
+      const occupied =await  isOccupied(room.bookingDates, currentDate );
        
-      if (overlapFound) {
+      if (occupied) {
         await roomCollection.updateOne(
           { _id: room._id },
           { $set: { occupied: true } }
         );
-        // console.log("room occupied set to true")
+        console.log("room "+ room.roomNumber +" room occupied set to true")
       } else {
  
         await roomCollection.updateOne(
           { _id: room._id },
           { $set: { occupied: false } }
         );
-        // console.log("room occupied set to false")
+        console.log("room "+ room.roomNumber +" room occupied set to false")
       }
     }
     return allRooms;
@@ -400,4 +408,3 @@ export const runApp = async () => {
     await connection.closeConnection()
   }
 }
-

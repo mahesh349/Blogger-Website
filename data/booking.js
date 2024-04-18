@@ -48,7 +48,6 @@ export const validBooking = async (bookingDates, checkinDate, checkoutDate) => {
       return true
     }
   }
-
   // No overlaps found
   return false
 }
@@ -157,8 +156,7 @@ export const CreateBooking = async (
     }
 
     const roomFound = await roomCollection.findOne({ roomNumber: roomNumber })
-   
-
+  
     let overlapFound =await validBooking(roomFound.bookingDates, checkIn_FinalDate, checkOut_FinalDate)
     console.log("overlapFound ="+ overlapFound)
     if (overlapFound) {  
@@ -168,9 +166,9 @@ export const CreateBooking = async (
     if (!AddBooking.acknowledged || !AddBooking.insertedId) {
       throw `Could not add Booking data`
     }
-
+    const bookingId = AddBooking.insertedId;
  
-
+    bookedDates.bookingId = bookingId;
     const updateResult = await roomCollection.updateOne(
       { roomNumber: roomNumber },
       {

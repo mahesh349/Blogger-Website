@@ -1,16 +1,22 @@
 {{#unless paymentSuccess}}
 <form>
 
-  <p>Bill</p>
+  <h2>Bill</h2>
   <hr />
   {{! show roomNumber,roomPrice,totalPrice,finalPrice }}
   <ul>
+    <li>Room Number: {{bookingDetails.roomNumber}}</li>
+    <li>Room Type: {{bookingDetails.roomType}}</li>
     <li>Room Price: ${{bookingDetails.roomPrice}}/day</li>
+     <li>Check in Date: {{bookingDetails.CheckinDate}}</li>
+     <li>Check out Date: {{bookingDetails.CheckOutDate}}</li>
+     
     <li>Number Of Days: {{bookingDetails.numberOfDays}}</li>
     <li>Total stay Price: ${{bookingDetails.totalPrice}}</li>
     <li>Tax (20%) : ${{bookingDetails.taxPrice}}</li>
     <li>Service Fee (10%): ${{bookingDetails.serviceFee}}</li>
-    <li>Final Price: ${{bookingDetails.finalPrice}}</li>
+    <hr />
+    <li><h3>Final Price: ${{bookingDetails.finalPrice}}</h3></li>
   </ul>
 </form>
 

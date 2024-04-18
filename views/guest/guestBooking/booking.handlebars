@@ -28,7 +28,28 @@ window.onload = function() {
     const formattedToday = today.toISOString().split('T')[0];
     document.getElementById('CheckinDateInput').setAttribute('min', formattedToday);
     document.getElementById('CheckinDateInput').addEventListener('change', setMinCheckoutDate);
+
+       const form = document.getElementById('BookingForm');
+
+       form.addEventListener('submit', function(event) {
+     
+        event.preventDefault();
+
+     
+        showSpinner();
+
+        form.submit();
+           });
+    
 };
+function showSpinner() {
+    document.getElementById('loading-spinner').style.display = 'block';
+}
+
+function hideSpinner() {
+    document.getElementById('loading-spinner').style.display = 'none';
+}
+
 
 </script>
 
@@ -85,12 +106,16 @@ window.onload = function() {
   <br />
   <button type="submit">Proceed For Payment</button>
 </form>
+<div id="loading-spinner" style="display: none; position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%);">
+    <div class="spinner"></div>
+</div>
 
 
 
 <div class="space-below">
 
 </div>
+<h1>Hello</h1>
 
 <footer>
   <a href="/guest/room">Back to Guest Rooms</a>

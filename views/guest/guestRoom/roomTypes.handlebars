@@ -21,24 +21,53 @@
         checkoutDateInput.value = '';
     }
 }
+function showErrorBox(form) {
+    // Get the error box for the given form
+    let errorBox = form.nextElementSibling.querySelector('.errorBox');
+    // Show the error box
+    errorBox.style.display = 'block';
+}
 
 window.onload = function() {
-    
     let forms = document.querySelectorAll('.guest-room-form');
 
-   
+    // Initialize all forms
     forms.forEach(form => {
         let checkinDateInput = form.querySelector('#CheckinDateInput');
-        
-      
+        let checkoutDateInput = form.querySelector('#CheckoutDateInput');
+
+        // Set the minimum check-in date to today
         const today = new Date();
         const formattedToday = today.toISOString().split('T')[0];
         checkinDateInput.setAttribute('min', formattedToday);
 
-       
+        // Add event listener for check-in date change
         checkinDateInput.addEventListener('change', () => setMinCheckoutDate(form));
+
+        // Add event listener for form submission
+        form.addEventListener('submit', function(event) {
+            // Get the entered check-in and check-out dates
+            let checkinDate = checkinDateInput.value;
+            let checkoutDate = checkoutDateInput.value;
+
+            // Check if both dates are selected
+            if (checkinDate === '' || checkoutDate === '') {
+                // Prevent form submission
+                event.preventDefault();
+                
+                // Show the error box only for the submitted form
+                showErrorBox(form);
+              
+            }else{
+form.submit;
+            }
+            
+        });
     });
 };
+
+
+
 
 
 </script>
@@ -52,15 +81,17 @@ window.onload = function() {
 {{/if}}
 
 
+
+
     <div class="room-card">
      
       <form action="/guest/room/findingRoom" method="POST" class="guest-room-form">
  
          <p>Room Type: Single</p>
         <p>Price: $13.09</p>
-        <p>Description: {{this.roomDescription}}</p>
+        <p>Description: Experience a cozy stay in our Single Room, perfect for solo travelers. This room features a comfortable twin-sized bed, a desk for work or leisure, and a private bathroom with modern amenities. Enjoy complimentary Wi-Fi and a flat-screen TV for entertainment. The room's tasteful decor creates a relaxing atmosphere for your stay.</p>
           <div>
-              <img src="{{this}}" alt="Room Photo" class="room-photo" />
+              <img src="../../../public/single.PNG" alt="Room Photo" class="room-photo" />
           </div>
 
         <label for="roomType"></label>
@@ -75,9 +106,15 @@ window.onload = function() {
          <label for="CheckinDateInput">Checkout Date:</label>
         <input id="CheckoutDateInput" name="CheckoutDateInput" type="date" disabled />
 
-        <button type="submit">Book</button>
+        <button type="submit" class="submit-button">Book</button>
       </form>
+<div  class="alert errorBox" style="display: none;">
+  Please select both check-in and check-out dates.
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
     </div>
+     
+</div>
+ 
 
 
     {{!-- double Room --}}
@@ -88,9 +125,9 @@ window.onload = function() {
  
          <p>Room Type: Double</p>
         <p>Price: $20.00</p>
-        <p>Description: {{this.roomDescription}}</p>
+        <p>Description: Our Double Room offers a spacious retreat for couples or friends traveling together. It includes a comfortable queen-sized bed and a seating area for relaxation. The room is equipped with a private bathroom, complimentary Wi-Fi, and a flat-screen TV for your enjoyment. Unwind in style with our thoughtfully curated decor and amenities.</p>
           <div>
-              <img src="{{this}}" alt="Room Photo" class="room-photo" />
+                <img src="../../../public/double.PNG" alt="Room Photo" class="room-photo" />
           </div>
 
         <label for="roomType"></label>
@@ -105,8 +142,16 @@ window.onload = function() {
          <label for="CheckinDateInput">Checkout Date:</label>
         <input id="CheckoutDateInput" name="CheckoutDateInput" type="date" disabled />
 
-        <button type="submit">Book</button>
+        <button type="submit"  class="submit-button">Book</button>
+
+      
       </form>
+   <div class="alert errorBox" style="display: none;">
+  Please select both check-in and check-out dates.
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+  
+</div>
+     
     </div>
 
 
@@ -118,9 +163,9 @@ window.onload = function() {
  
          <p>Room Type: Suite</p>
         <p>Price: $50.00</p>
-        <p>Description: {{this.roomDescription}}</p>
+        <p>Description: Indulge in luxury with our Suite Room, designed for the ultimate comfort and relaxation. The suite features a plush king-sized bed, a separate living area with a sofa, and a private bathroom with upscale amenities. Stay connected with complimentary Wi-Fi and enjoy the convenience of a flat-screen TV in both the bedroom and living area. The elegant decor and premium features make this suite a perfect choice for a memorable stay.</p>
           <div>
-              <img src="{{this}}" alt="Room Photo" class="room-photo" />
+              <img src="../../../public/suite.PNG" alt="Room Photo" class="room-photo" />
           </div>
 
         <label for="roomType"></label>
@@ -135,8 +180,13 @@ window.onload = function() {
          <label for="CheckinDateInput">Checkout Date:</label>
         <input id="CheckoutDateInput" name="CheckoutDateInput" type="date" disabled />
 
-        <button type="submit">Book</button>
+        <button type="submit"  class="submit-button">Book</button>
       </form>
+          <div class="errorBox alert " style="display: none;">
+  Please select both check-in and check-out dates.
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+</div>
+  
     </div>
 
 

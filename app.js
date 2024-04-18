@@ -22,7 +22,7 @@ const queueRateLimit = 10000; // 10 seconds in milliseconds for processing each 
 //express rate limiter
 const limiter = rateLimit({
   windowMs: 60 * 1000, //time window before requests refresh
-  max: 2,  //number of req per IP in time window
+  max: 3,  //number of req per IP in time window
   message: "Too many requests from this IP, please try again later."
 })
 
