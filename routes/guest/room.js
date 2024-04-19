@@ -66,7 +66,7 @@ router
         } catch (e) {
             res.render('./guest/guestRoom/noRoomFound');
         }
-    })
+    });
 
   
   

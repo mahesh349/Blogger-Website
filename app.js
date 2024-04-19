@@ -269,7 +269,7 @@ app.use("/guest/booking/book/:roomNumber", limiter, async (req, res, next) => {
   await publishToQueue(channel, request);
   console.log('Request received and added to queue');
 
-  // Listen for'requestConsumed'
+  // Listen for 'requestConsumed'
   eventEmitter.once('requestConsumed', (consumedRequest) => {
       // Check if the consumed request matches the current request
       if (consumedRequest.id === request.id) {

@@ -23,26 +23,8 @@ function setMinCheckoutDate() {
     }
 }
 
-window.onload = function() {
-    const today = new Date();
-    const formattedToday = today.toISOString().split('T')[0];
-    document.getElementById('CheckinDateInput').setAttribute('min', formattedToday);
-    document.getElementById('CheckinDateInput').addEventListener('change', setMinCheckoutDate);
-
-       const form = document.getElementById('BookingForm');
-
-       form.addEventListener('submit', function(event) {
-     
-        event.preventDefault();
-
-     
-        showSpinner();
-
-        form.submit();
-           });
-    
-};
 function showSpinner() {
+  console.log("ShowSpinner is triggered")
     document.getElementById('loading-spinner').style.display = 'block';
 }
 
@@ -50,7 +32,49 @@ function hideSpinner() {
     document.getElementById('loading-spinner').style.display = 'none';
 }
 
+window.onload = function() {
+    const today = new Date();
+    const formattedToday = today.toISOString().split('T')[0];
+    document.getElementById('CheckinDateInput').setAttribute('min', formattedToday);
+    document.getElementById('CheckinDateInput').addEventListener('change', setMinCheckoutDate);
 
+    const form = document.getElementById("BookingForm");;
+
+        form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        
+        console.log("submit clicked")
+        let hasError = false;
+
+        //validation
+         const firstNameInput = document.getElementById('FirstNameInput').value.trim();
+    const lastNameInput = document.getElementById('LastNameInput').value.trim();
+    const emailInput = document.getElementById('EmailIdInput').value.trim();
+    const phoneInput = document.getElementById('phone').value.trim();
+    const checkinDateInput = document.getElementById('CheckinDateInput').value.trim();
+    const checkoutDateInput = document.getElementById('CheckoutDateInput').value.trim();
+
+ 
+    if (!firstNameInput || !lastNameInput || !emailInput || !phoneInput || !checkinDateInput || !checkoutDateInput) {
+        hasError = true;
+    }
+        // For example, check if any required fields are empty
+        if (hasError) {
+          console.log("errors present")
+            hasError = true;
+          
+        }
+
+        // If there are no errors, proceed with form submission
+        if (!hasError) {
+          console.log("clear of errors")
+            showSpinner();
+            form.submit(); // Submit the form
+        }
+    });
+    
+};
 </script>
 
 {{#if message}}
@@ -79,10 +103,10 @@ function hideSpinner() {
   <label for="roomNumber"></label>
   <input id="roomNumber" name="roomNumber" value={{this.roomNumber}} type="hidden">
 
-  {{!-- <label for="roomType"></label> --}}
+ 
   <input id="roomType" name="roomType" value={{this.roomType}} type="hidden">
 
-  {{!-- <label for="roomPrice"></label> --}}
+  
   <input id="roomPrice" name="roomPrice" value={{this.roomPrice}} type="hidden">
 
   <label for="FirstNameInput">Enter First Name</label>
@@ -115,7 +139,7 @@ function hideSpinner() {
 <div class="space-below">
 
 </div>
-<h1>Hello</h1>
+<h1 style="display: none;">hello</h1>
 
 <footer>
   <a href="/guest/room">Back to Guest Rooms</a>

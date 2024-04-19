@@ -34,7 +34,7 @@ const changeDateFormatBooking = (dateValue) => {
   return `${month}-${day}-${year}`;
 };
 
-export const validBooking = async (bookingDates, checkinDate, checkoutDate) => {
+export const isOverlapping = async (bookingDates, checkinDate, checkoutDate) => {
   const newCheckinDate = new Date(checkinDate)
   const newCheckoutDate = new Date(checkoutDate)
 
@@ -43,7 +43,7 @@ export const validBooking = async (bookingDates, checkinDate, checkoutDate) => {
     const existingCheckinDate = new Date(dateRange.checkinDate)
     const existingCheckoutDate = new Date(dateRange.checkoutDate)
 
-    if (newCheckinDate < existingCheckoutDate && newCheckoutDate > existingCheckinDate) {
+    if (newCheckinDate <= existingCheckoutDate && newCheckoutDate >= existingCheckinDate) {
       // overlap is found
       return true
     }
@@ -51,6 +51,10 @@ export const validBooking = async (bookingDates, checkinDate, checkoutDate) => {
   // No overlaps found
   return false
 }
+
+// console.log(await isOverlapping([{
+//   checkinDate:"04-21-2024",
+//   checkoutDate:"04-22-2024"}],"04-19-2024","04-21-2024"))
 
 export const CreateBooking = async (
   firstName,
@@ -157,7 +161,7 @@ export const CreateBooking = async (
 
     const roomFound = await roomCollection.findOne({ roomNumber: roomNumber })
   
-    let overlapFound =await validBooking(roomFound.bookingDates, checkIn_FinalDate, checkOut_FinalDate)
+    let overlapFound =await isOverlapping(roomFound.bookingDates, checkIn_FinalDate, checkOut_FinalDate)
     console.log("overlapFound ="+ overlapFound)
     if (overlapFound) {  
       throw "Room Occupied"

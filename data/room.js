@@ -40,7 +40,7 @@ export const isOccupied = async (bookingDates, today) => {
     const existingCheckoutDate = new Date(dateRange.checkoutDate);
     const bookingCollection = await bookings();
    
-    if (todayDate >= existingCheckinDate && todayDate < existingCheckoutDate) {
+    if (todayDate >= existingCheckinDate && todayDate <= existingCheckoutDate) {
     
       const booking = await bookingCollection.findOne({ _id: new ObjectId(dateRange.bookingId) });
             
@@ -67,7 +67,7 @@ export const isOverlapping = async (bookingDates, checkinDate, checkoutDate) => 
     const existingCheckinDate = new Date(dateRange.checkinDate)
     const existingCheckoutDate = new Date(dateRange.checkoutDate)
 
-    if (newCheckinDate < existingCheckoutDate && newCheckoutDate > existingCheckinDate) {
+    if (newCheckinDate <= existingCheckoutDate && newCheckoutDate >= existingCheckinDate) {
       // overlap is found
       return true
     }
@@ -88,8 +88,6 @@ export const findRoomNumber =  async (checkinDate,checkoutDate,roomType) =>{
       const isRoomFree = await isOverlapping(bookingDates, checkinDate, checkoutDate);
 
       if (!isRoomFree) {
-     
-       
         return roomNumber;
       }
     }
