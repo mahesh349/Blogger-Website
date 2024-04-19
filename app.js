@@ -260,7 +260,7 @@ app.use("/logout", (req, res, next) => {
 });
 
 
-
+//applying middleware to implement rate-limiter and queue to /guest/booking/book/:roomNumber
 app.use("/guest/booking/book/:roomNumber", limiter, async (req, res, next) => {
   console.log("In booking_room middleware");
   const request = req.body;

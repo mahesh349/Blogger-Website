@@ -44,8 +44,8 @@ export const isOccupied = async (bookingDates, today) => {
     
       const booking = await bookingCollection.findOne({ _id: new ObjectId(dateRange.bookingId) });
             
-      if (booking && booking.BookingStatus) {
-        console.log("booking.BookingStatus =" + booking.BookingStatus)
+      if (booking && booking.isCheckedIn) {
+        console.log("booking.isCheckedIn =" + booking.isCheckedIn)
       
           return true;
       }
@@ -159,7 +159,7 @@ export const getAllRooms = async () => {
     const currentDate = changeDateFormatBooking(new Date());
     console.log("currentDate = " + currentDate)
 
-    //for loop to update isOccupuied for all rooms based on booking dates and bookingStatuses
+    //for loop to update isOccupuied for all rooms based on booking dates and isCheckedIn
     for (const room of allRooms) {
       
       const occupied =await  isOccupied(room.bookingDates, currentDate );

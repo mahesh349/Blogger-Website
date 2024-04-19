@@ -63,12 +63,12 @@ export const checkout = async (emailId) => {
 
 export const makeBooking = async (emailId) => {
     try{
-        let ChangeBookingStatus = await bookings();
-        let UpdateBookingStatus = await ChangeBookingStatus.findOne({_id: new ObjectId(emailId)});
-        if (UpdateBookingStatus === null) {
+        let ChangeisCheckedIn = await bookings();
+        let UpdateisCheckedIn = await ChangeisCheckedIn.findOne({_id: new ObjectId(emailId)});
+        if (UpdateisCheckedIn === null) {
             throw `No Data Found For Checkin Please Try Again`;
         }
-        let UpdateBooking = await ChangeBookingStatus.updateOne({ _id: new ObjectId(emailId) }, { $set: { BookingStatus: true } });
+        let UpdateBooking = await ChangeisCheckedIn.updateOne({ _id: new ObjectId(emailId) }, { $set: { isCheckedIn: true } });
         return UpdateBooking
     }catch(e){
         throw `Error: ${e}`;

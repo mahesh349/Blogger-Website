@@ -142,7 +142,7 @@ export const CreateBooking = async (
       BookingDate: Final_BookDate,
       CheckinDate: checkIn_FinalDate,
       CheckOutDate: checkOut_FinalDate,
-      BookingStatus: false,
+      isCheckedIn: false,
       cleanStatus: false,
       roomNumber: validateRoomNumber,
       roomType: validateRoomType,
@@ -213,7 +213,7 @@ export const getBookingByIdAndTrue = async (bookingId) => {
     bookingId = await helpers.checkId(bookingId)
     let bookingCollection = await bookings()
     let UpdateEventData = {
-      BookingStatus: true,
+      isCheckedIn: true,
     }
     const updatedBooking = await bookingCollection.findOneAndUpdate(
       { _id: new ObjectId(bookingId) },

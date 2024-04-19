@@ -15,7 +15,7 @@
                     <p class="members">Room Type: {{ roomType }}</p>
                     <p class="members">room Price: {{ roomPrice }}</p>
                     <p class="members">Clean Status: {{ cleanStatus }}</p>
-                    <p id="booking-status-{{_id}}" class="members">BookingStatus: {{ BookingStatus }}</p>
+                    <p id="booking-status-{{_id}}" class="members">isCheckedIn: {{ isCheckedIn }}</p>
                     <p>{{_id}}</p>
                 </div>
             </div>
@@ -40,7 +40,7 @@
             .then(data => {
                 const statusElement = document.querySelector(`#booking-status-${bookingId}`);
                 if (statusElement) {
-                    statusElement.textContent = 'BookingStatus: true';
+                    statusElement.textContent = 'isCheckedIn: true';
                 }
                 alert('Booking successful');
             })
